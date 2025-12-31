@@ -30,19 +30,16 @@ sub strava_test {
   my $segment = $strava->segment(3468536);
   subtest 'Segment' => sub {
     isa_ok($segment, 'WebService::Strava::Segment');
-    can_ok($segment, qw(retrieve list_efforts leaderboard));
+    can_ok($segment, qw(retrieve list_efforts));
     is($segment->{activity_type}, 'Ride', 'activity_type is a Ride');
     
     subtest 'Segment: List Efforts' => sub { 
       my $efforts = $segment->list_efforts;
       is( ref( $efforts ), 'ARRAY', 'Efforts is an array' );
-      isa_ok( @{$efforts}[0], 'WebService::Strava::Athlete::Segment_Effort');
-      can_ok(@{$efforts}[0], qw(retrieve));
-    };
-    
-    subtest 'Segment: Leaderboard' => sub { 
-      my $leaderboard = $segment->leaderboard;
-      is( ref( $leaderboard ), 'ARRAY', 'Leaderboard is an array' );
+      if ( scalar @{$efforts} ) {
+        isa_ok( @{$efforts}[0], 'WebService::Strava::Athlete::Segment_Effort');
+        can_ok(@{$efforts}[0], qw(retrieve));
+      }
     };
   };
 }

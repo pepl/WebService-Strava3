@@ -37,7 +37,6 @@ my $strava = WebService::Strava->new();
 #my $starred = $strava->list_starred_segments();
 
 #my $segment = $strava->segment(3468536);
-#my $leaderboard = $segment->leaderboard();
 
 my $starred = $strava->list_starred_segments();
 

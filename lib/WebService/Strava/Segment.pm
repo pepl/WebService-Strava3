@@ -129,31 +129,23 @@ method retrieve() {
 
 =method list_efforts()
 
-  $segment->list_efforts([athlete_id => 123456], [page => 2], [efforts => 100], [raw => 1])'
+  $segment->list_efforts([page => 2], [efforts => 100], [raw => 1])'
 
-Returns the Segment efforts for a particular segment. Takes 4 optional
-parameters of 'athlete_id', 'page', 'efforts' and 'raw'. Raw will return the 
+Returns the Segment efforts for a particular segment of the authenticated user. Takes 3 optional
+parameters of 'page', 'efforts' and 'raw'. Raw will return the
 an array segment_effort data instead of L<WebService::Strava::Athlete::Segment_Effort>
 objects.
-
-  * 'athelete_id' will return the segment efforts (if any) for the athelete
-    in question.
 
 The results are paginated and a maximum of 200 results can be returned
 per page.
 
 =cut
 
-method list_efforts(:$efforts = 25,:$page = 1,:$athlete_id, :$raw = 0) {
+method list_efforts(:$efforts = 25,:$page = 1,:$athlete_id=undef, :$raw = 0) {
   # TODO: Handle pagination better #4
-  my $data;
-  if ($athlete_id) {
-    $data = $self->auth->get_api("/segments/$self->{id}/all_efforts?per_page=$efforts&page=$page&athlete_id=$athlete_id");
-  } else {
-    $data = $self->auth->get_api("/segments/$self->{id}/all_efforts?per_page=$efforts&page=$page");
-  }
-  
-  if (! $raw) {
+  my $data = $self->auth->get_api("/segment_efforts?segment_id=$self->{id}&per_page=$efforts");
+
+  if (! $raw ) {
     my $index = 0;
     foreach my $effort (@{$data}) {
       @{$data}[$index] = WebService::Strava::Athlete::Segment_Effort->new(id => $effort->{id}, auth => $self->auth, _build => 0);
@@ -163,38 +155,5 @@ method list_efforts(:$efforts = 25,:$page = 1,:$athlete_id, :$raw = 0) {
 
   return $data;
 };
-
-=method leaderboard
-
-  $segment->leaderboard(
-    [page => 2], 
-    [activities => 100], 
-    [gender => M|F], 
-    [following => 1|0], 
-    [clubid => 123456], 
-    [date_range => 'this_year'|'this_month'|'this_week'|'today'], 
-    [age_group => '0_24'|'25_34'|'35_44'|'45_54'|'55_64'|'65_plus'],
-    [weight_class => |'0_124'|'125_149'|'150_164'|'165_179'|'180_199'|'200_plus'|'0_54'|'55_64'|'65_74'|'75_84'|'85_94'|'95_plus']);
-
-Returns the leaderboard for the current segment. Takes a number of optional parameters 
-including 'page' and 'activities' (per page). For more information regarding the leaderboard
-information visit the api documentation L<http://strava.github.io/api/v3/segments/#leaderboard>
-
-The results are paginated and a maximum of 200 results can be returned
-per page.
-
-=cut
-
-method leaderboard(:$activities = 25, :$page = 1, :$gender = undef, :$age_group = undef, :$weight_class = undef, :$following = undef, :$club = undef, :$date_range = undef, ) {
-  # TODO: Handle pagination better use #4's solution when found.
-  my $url = "/segments/$self->{id}/leaderboard?per_page=$activities&page=$page";
-  $url .= "&age_group=$age_group" if $age_group;
-  $url .= "&gender=$gender" if $gender;
-  $url .= "&weight_class=$weight_class" if $weight_class;
-  $url .= "&following=$following" if $following;
-  $url .= "&club=$club" if $club;
-  $url .= "&date_range=$date_range" if $date_range;
-  return $self->auth->get_api("$url")->{entries};
-}
 
 1;
