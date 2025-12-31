@@ -214,31 +214,6 @@ method list_activities(:$activities = 25, :$page = 1, :$before?, :$after?) {
   return $data;
 }
 
-=method list_friends_activities
-
-  $athlete->list_activities([page => 2], [activities => 100])
-
-Returns an arrayRef activities for friends of the current authenticated user. Takes 2 optional
-parameters of 'page' and 'activities' (per page).
-
-The results are paginated and a maximum of 200 results can be returned
-per page.
-
-=cut
-
-method list_friends_activities(:$activities = 25, :$page = 1) {
-  # TODO: Handle pagination better use #4's solution when found.
-  my $data = $self->auth->get_api("/activities/following?per_page=$activities&page=$page");
-  my $index = 0;
-  foreach my $activity_data (@{$data}) {
-    my $activity = WebService::Strava::Athlete::Activity->new(id => $activity_data->{id}, auth => $self->auth, _build => 0);
-    $activity->_init_from_api($activity_data);
-    @{$data}[$index] = $activity;
-    $index++;
-  }
-  return $data;
-}
-
 =method upload_activity
 
   $strava->upload_activity(
