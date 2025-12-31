@@ -11,7 +11,7 @@ use Carp qw(croak);
 use File::Basename;
 use File::MimeInfo::Magic;
 use Data::Dumper;
-use Method::Signatures 20140224;
+use Function::Parameters;
 use Moo;
 use experimental 'say';
 use namespace::clean;
@@ -217,12 +217,12 @@ perl data structure of what the api returns.
 method uploads_api(
   :$file,
   :$type,
-  :$activity_type?,
-  :$name?,
-  :$description?,
-  :$private?,
-  :$trainer?,
-  :$external_id?,
+  :$activity_type = undef,
+  :$name = undef,
+  :$description = undef,
+  :$private = undef,
+  :$trainer = undef,
+  :$external_id = undef,
 ) {
   my $filename = basename($file);
   my $mimetype = mimetype($file);

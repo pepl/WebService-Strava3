@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use WebService::Strava::Auth;
 use Moo;
-use Method::Signatures;
+use Function::Parameters;
 use IO::Socket;
 use JSON 'from_json';
 use Test::Most;

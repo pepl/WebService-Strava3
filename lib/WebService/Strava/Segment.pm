@@ -7,7 +7,7 @@ use Scalar::Util qw(looks_like_number);
 use Scalar::Util::Reftype;
 use Carp qw(croak);
 use Data::Dumper;
-use Method::Signatures 20140224;
+use Function::Parameters;
 use Moo;
 use namespace::clean;
 
@@ -185,7 +185,7 @@ per page.
 
 =cut
 
-method leaderboard(:$activities = 25, :$page = 1, :$gender?, :$age_group?, :$weight_class?, :$following?, :$club?, :$date_range?, ) {
+method leaderboard(:$activities = 25, :$page = 1, :$gender = undef, :$age_group = undef, :$weight_class = undef, :$following = undef, :$club = undef, :$date_range = undef, ) {
   # TODO: Handle pagination better use #4's solution when found.
   my $url = "/segments/$self->{id}/leaderboard?per_page=$activities&page=$page";
   $url .= "&age_group=$age_group" if $age_group;

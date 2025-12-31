@@ -5,7 +5,7 @@ use warnings;
 use autodie;
 use Data::Dumper;
 use Carp qw(croak);
-use Method::Signatures 20140224;
+use Function::Parameters;
 use Moo;
 use namespace::clean;
 
@@ -65,7 +65,7 @@ returned unless an ID is provided.
 
 use WebService::Strava::Athlete;
 
-method athlete($id?) {
+method athlete($id=undef) {
   return WebService::Strava::Athlete->new(id =>$id, auth => $self->auth);
 }
 
@@ -198,7 +198,7 @@ per page.
 
 =cut
 
-method list_activities(:$activities = 25, :$page = 1, :$before?, :$after?) {
+method list_activities(:$activities = 25, :$page = 1, :$before=undef, :$after=undef) {
   # TODO: Handle pagination better use #4's solution when found.
   my $url = "/athlete/activities?per_page=$activities&page=$page";
   $url .= "&before=$before" if $before;
@@ -276,12 +276,12 @@ be a unique identifier.
 method upload_activity(
   :$file, 
   :$type = 'gpx', 
-  :$activity_type?,
-  :$name?,
-  :$description?,
-  :$private?,
-  :$trainer?,
-  :$external_id?,
+  :$activity_type=undef,
+  :$name=undef,
+  :$description=undef,
+  :$private=undef,
+  :$trainer=undef,
+  :$external_id=undef,
 ) {
   my $data = $self->auth->uploads_api(
     file => $file, 

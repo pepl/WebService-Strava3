@@ -7,7 +7,7 @@ use Scalar::Util qw(looks_like_number);
 use Carp qw(croak);
 use Scalar::Util::Reftype;
 use Data::Dumper;
-use Method::Signatures 20140224;
+use Function::Parameters;
 use Moo;
 use namespace::clean;
 
