@@ -9,7 +9,6 @@ use Carp qw(croak);
 use Data::Dumper;
 use Method::Signatures 20140224;
 use Moo;
-use experimental 'switch';
 use namespace::clean;
 
 # ABSTRACT: A Strava Segment Object
@@ -97,9 +96,11 @@ method _build_segment() {
   my $segment = $self->auth->get_api("/segments/$self->{id}");
  
   foreach my $key (keys %{ $segment }) {
-    given ( $key ) {
-      when      ("athlete")   { $self->_instantiate("Athlete", $key, $segment->{$key}); }
-      default                 { $self->{$key} = $segment->{$key}; }
+    if ( $key eq 'athlete' ) {
+      $self->_instantiate("Athlete", $key, $segment->{$key});
+    }
+    else {
+      $self->{$key} = $segment->{$key};
     }
   }
 

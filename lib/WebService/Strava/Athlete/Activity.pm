@@ -9,7 +9,6 @@ use Scalar::Util::Reftype;
 use Data::Dumper;
 use Method::Signatures 20140224;
 use Moo;
-use experimental 'switch';
 use namespace::clean;
 
 # ABSTRACT: A Strava Activity Object
@@ -130,12 +129,17 @@ method _build_activity() {
   return;
 }
 
+state %activity_map = (
+  'athlete' => 'Athlete',
+  'segment_efforts' => 'Athlete::Segment_Effort',
+);
 method _init_from_api($activity) {
   foreach my $key (keys %{ $activity }) {
-    given ( $key ) {
-      when      ("athlete")           { $self->_instantiate("Athlete", $key, $activity->{$key}); }
-      when      (/segment_efforts/)   { $self->_instantiate("Athlete::Segment_Effort", $key, $activity->{$key}); }
-      default                         { $self->{$key} = $activity->{$key}; }
+    if ( exists $activity_map{$key} ) {
+      $self->_instantiate($activity_map{$key}, $key, $activity->{$key});
+    }
+    else {
+      $self->{$key} = $activity->{$key};
     }
   }
 

@@ -9,7 +9,6 @@ use Scalar::Util::Reftype;
 use Data::Dumper;
 use Method::Signatures 20140224;
 use Moo;
-use experimental 'switch';
 use namespace::clean;
 
 # ABSTRACT: A Strava Segment Effort Object
@@ -91,15 +90,19 @@ sub BUILD {
   }
   return;
 }
-
+state %effort_map = (
+  'athlete' => 'Athlete',
+  'segment' => 'Segment',
+);
 method _build_effort() {
   my $effort = $self->auth->get_api("/segment_efforts/$self->{id}");
  
   foreach my $key (keys %{ $effort }) {
-    given ( $key ) {
-      when      (/athlete/)   { $self->_instantiate("Athlete", $key, $effort->{$key}); }
-      when      (/segment/)   { $self->_instantiate("Segment", $key, $effort->{$key}); }
-      default                 { $self->{$key} = $effort->{$key}; }
+    if ( exists $effort_map{$key} ) {
+      $self->_instantiate($effort_map{$key}, $key, $effort->{$key});
+    }
+    else {
+      $self->{$key} = $effort->{$key};
     }
   }
 

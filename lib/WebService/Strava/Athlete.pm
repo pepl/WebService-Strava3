@@ -9,7 +9,6 @@ use Carp qw(croak);
 use Data::Dumper;
 use Method::Signatures 20140224;
 use Moo;
-use experimental 'switch';
 use namespace::clean;
 
 # ABSTRACT: A Strava Athlete Object
@@ -100,6 +99,11 @@ sub BUILD {
   return;
 }
 
+state %athlete_map = (
+  'bikes' => 'Athlete::Gear::Bike',
+  'shoes' => 'Athlete::Gear::Shoe',
+  'clubs' => 'Club',
+);
 method _build_athlete() {
   my $athlete;
   if ($self->id) {
@@ -109,11 +113,11 @@ method _build_athlete() {
   }
  
   foreach my $key (keys %{ $athlete }) {
-    given ( $key ) {
-      when      (/bikes/)   { $self->_instantiate("Athlete::Gear::Bike", $key, $athlete->{$key}); }
-      when      (/shoes/)   { $self->_instantiate("Athlete::Gear::Shoe", $key, $athlete->{$key}); }
-      when      (/clubs/)   { $self->_instantiate("Club", $key, $athlete->{$key}); }
-      default               { $self->{$key} = $athlete->{$key}; }
+    if ( exists $athlete_map{$key} ) {
+      $self->_instantiate($athlete_map{$key}, $key, $athlete->{$key});
+    }
+    else {
+      $self->{$key} = $athlete->{$key};
     }
   }
   
