@@ -268,8 +268,8 @@ method prompt($question,:$default) { # inspired from here: http://alvinalexander
     $default = "";
   }
 
-  $| = 1;               # flush
-  $_ = <STDIN>;         # get input
+  local $| = 1;         # flush
+  $_ = <>;              # get input
 
   chomp;
   if ("$default") {

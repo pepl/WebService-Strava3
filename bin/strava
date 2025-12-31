@@ -2,7 +2,6 @@
 use v5.10.0;
 use strict;
 use warnings;
-use experimental 'say';
 use WebService::Strava;
 use Getopt::Long;
 use File::Spec;
@@ -125,6 +124,7 @@ sub version {
   $::VERSION ||= "Unreleased";
   say "strava version                 : $::VERSION";
   say "WebService::Strava version     : ", $strava->VERSION;
+  return;
 }
 
 sub setup {
@@ -134,6 +134,7 @@ sub setup {
   if ($athlete->{firstname}) {
     say "Congratulations $athlete->{firstname}, you appear to have authenticated successfully!";
   }
+  return;
 }
 
 sub upload {
@@ -153,5 +154,6 @@ sub upload {
   } else {
     say "Upload failed: $upload->{status}";
   }
+  return;
 }
 
