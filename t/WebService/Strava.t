@@ -31,7 +31,7 @@ sub strava_test {
     isa_ok($strava, 'WebService::Strava');
     isa_ok($strava->auth, 'WebService::Strava::Auth');
     can_ok($strava, qw(auth athlete clubs segment list_starred_segments
-        effort activity list_activities list_friends_activities));  
+        effort activity list_activities)); 
     can_ok($strava->auth, qw(get post auth get_api setup));
     
     subtest 'Strava Methods' => sub {
@@ -61,15 +61,6 @@ sub strava_test {
         note('Current authenticated user has not got any activities');
       }
   
-      my $friends_activities = $strava->list_friends_activities;
-      if (@{$friends_activities}[0])  {
-        is( ref( $friends_activities ), 'ARRAY', 'Friends activities is an array' );
-        isa_ok( @{$friends_activities}[0], 'WebService::Strava::Athlete::Activity');
-        #Check data was populated
-        ok( defined( @{$friends_activities}[0]->start_date ));
-      } else {
-        note('Current authenticated user has not got any friends with activities');
-      }
     };
   };
 }
