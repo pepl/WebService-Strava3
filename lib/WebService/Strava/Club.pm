@@ -129,7 +129,7 @@ method list_members(:$members = 25, :$page = 1) {
 
   $club->list_activities([page => 2], [activities => 100]);
 
-Returns an arrayRef of L<WebService::Strava::Athlete::Activity> objects for the club. Takes 2 optional
+Returns an arrayRef of C<ClubActivity> data structures for the club. Takes 2 optional
 parameters of 'page' and 'activities' (per page).
 
 The results are paginated and a maximum of 200 results can be returned
@@ -139,13 +139,7 @@ per page.
 
 method list_activities(:$activities = 25, :$page = 1) {
   # TODO: Handle pagination better use #4's solution when found.
-  my $data = $self->auth->get_api("/clubs/$self->{id}/activities?per_page=$activities&page=$page");
-  my $index = 0;
-  foreach my $activity (@{$data}) {
-    @{$data}[$index] = WebService::Strava::Athlete::Activity->new(id => $activity->{id}, auth => $self->auth, _build => 0);
-    $index++;
-  }
-  return $data;
+  return $self->auth->get_api("/clubs/$self->{id}/activities?per_page=$activities&page=$page");
 };
 
 1;

@@ -39,8 +39,6 @@ sub strava_test {
         my $club_activities = @{$athlete->{clubs}}[0]->list_activities();
         if (@{$club_activities}[0]) {
           is( ref( $club_activities ), 'ARRAY', 'Club Activities is an array' );
-          isa_ok( @{$club_activities}[0], 'WebService::Strava::Athlete::Activity');
-          can_ok(@{$club_activities}[0], qw(retrieve));
         } else {
           note('Current club appears to have no activities');
         }
